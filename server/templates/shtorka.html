@@ -1,0 +1,225 @@
+<script>
+class Accordeon {
+  constructor(node) {
+    this.node = node;
+
+    if (!this.node) return;
+
+    this.node['_component'] = this;
+
+    this.onAccordeonItemClick = this.onAccordeonItemClick.bind(this);
+
+    this.node.addEventListener('click', this.onAccordeonItemClick, false);
+  }
+
+  onAccordeonItemClick(e) {
+    const header = e.target.closest('.accordeon__header');
+
+    if (!header) return;
+
+    const parent = header.parentNode;
+
+    if (this.isItemOpen(parent)) {
+      this.unsetActiveItem();
+    } else {
+      this.unsetActiveItem();
+      this.setActiveItem(parent);
+    }
+  }
+
+  isItemOpen(parent) {
+    return parent.classList.contains('accordeon__item_open');
+  }
+
+  unsetActiveItem() {
+    [...this.node.querySelectorAll('.accordeon__item')].forEach(item => {
+      item.classList.remove('accordeon__item_open');
+      item.querySelector('.accordeon__content').style.maxHeight = null;
+    });
+  }
+
+  setActiveItem(item) {
+    item.classList.add('accordeon__item_open');
+
+    this.slideToggle(item.querySelector('.accordeon__content'));
+
+    this._dispatchAccordeonOpenEvent(item.scrollHeight);
+  }
+
+  slideToggle(item) {
+    item.style.maxHeight = item.scrollHeight + 'px';
+  }
+
+  _dispatchAccordeonOpenEvent(height) {
+    const event = new CustomEvent('accordeon:open', {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        component: this,
+        height: height
+      }
+    });
+
+    this.node.dispatchEvent(event);
+  }
+}
+
+new Accordeon(document.querySelector('.accordeon'));
+</script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background: #f1f1f1;
+}
+
+.container {
+  max-width: 1240px;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.accordeon__item {
+  margin-bottom: 17px;
+  background: #fff;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+}
+
+.accordeon__item_open .accordeon__header-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.accordeon__header {
+  position: relative;
+  padding: 25px 30px;
+  cursor: pointer;
+}
+
+.accordeon__header-title {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.accordeon__header-title-day {
+  color: #838383;
+  margin-right: 19px;
+}
+
+.accordeon__header-title-desc {
+  color: #111;
+}
+
+.accordeon__header-arrow {
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+  transition: all 0.5s ease;
+}
+
+.accordeon__content {
+  max-height: 0;
+  font-weight: 500;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+}
+
+.accordeon__content-wrapper {
+  padding: 8px 30px 30px 30px;
+}
+
+.accordeon__content-wrapper>p {
+  margin-bottom: 23px;
+}
+
+.accordeon__content-wrapper>p:last-child {
+  margin-bottom: 0;
+}
+</style>
+
+<div class="container">
+    <div class="accordeon">
+      <div class="accordeon__item">
+        <div class="accordeon__header">
+          <div class="accordeon__header-title">
+            <div class="accordeon__header-title-day">1 День.</div>
+            <div class="accordeon__header-title-desc">Отправление в Варшаву.</div>
+          </div>
+  
+          <div class="accordeon__header-arrow">
+            <svg width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.15279 7.70239C5.92365 8.43066 7.12891 8.43066 7.89977 7.70239L12.3968 3.4538C13.712 2.21126 12.8326 0 11.0233 0H2.02925C0.219924 0 -0.659436 2.21126 0.655764 3.4538L5.15279 7.70239Z" fill="#E5E5E5"/>
+            </svg>
+          </div>
+        </div>
+  
+        <div class="accordeon__content">
+          <div class="accordeon__content-wrapper">
+            <p>Вы сможете прогуляться по очаровательной пешеходной улице Вильняус, накупить сувениров, литовских национальных напитков и деликатесов.</p>
+            <p>Отъезд в Санкт-Петербург.</p>
+            <p>Прохождение границы.</p>
+            <p>Прибытие в Петербург поздно вечером.p</p>
+          </div>
+        </div>
+      </div>
+  
+      <div class="accordeon__item">
+        <div class="accordeon__header">
+          <div class="accordeon__header-title">
+            <div class="accordeon__header-title-day">2 День.</div>
+            <div class="accordeon__header-title-desc">Пешеходная прогулка по Вильнюсу.</div>
+          </div>
+  
+          <div class="accordeon__header-arrow">
+            <svg width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.15279 7.70239C5.92365 8.43066 7.12891 8.43066 7.89977 7.70239L12.3968 3.4538C13.712 2.21126 12.8326 0 11.0233 0H2.02925C0.219924 0 -0.659436 2.21126 0.655764 3.4538L5.15279 7.70239Z" fill="#E5E5E5"/>
+            </svg>
+          </div>
+        </div>
+  
+        <div class="accordeon__content">
+          <div class="accordeon__content-wrapper">
+            <p>2Вы сможете прогуляться по очаровательной пешеходной улице Вильняус, накупить сувениров, литовских национальных напитков и деликатесов.</p>
+            <p>Отъезд в Санкт-Петербург.</p>
+            <p>Прохождение границы.</p>
+            <p>Прибытие в Петербург поздно вечером.p</p>
+          </div>
+        </div>
+      </div>
+  
+      <div class="accordeon__item">
+        <div class="accordeon__header">
+          <div class="accordeon__header-title">
+            <div class="accordeon__header-title-day">3 День.</div>
+            <div class="accordeon__header-title-desc">Транзит по территории Чехии, Польши и Литвы.</div>
+          </div>
+  
+          <div class="accordeon__header-arrow">
+            <svg width="14" height="9" viewBox="0 0 14 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.15279 7.70239C5.92365 8.43066 7.12891 8.43066 7.89977 7.70239L12.3968 3.4538C13.712 2.21126 12.8326 0 11.0233 0H2.02925C0.219924 0 -0.659436 2.21126 0.655764 3.4538L5.15279 7.70239Z" fill="#E5E5E5"/>
+            </svg>
+          </div>
+        </div>
+  
+        <div class="accordeon__content">
+          <div class="accordeon__content-wrapper">
+            <p>Вы сможете прогуляться по очаровательной пешеходной улице Вильняус, накупить сувениров, литовских национальных напитков и деликатесов.</p>
+            <p>Отъезд в Санкт-Петербург.</p>
+            <p>Прохождение границы.</p>
+            <p>Прибытие в Петербург поздно вечером.p</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
